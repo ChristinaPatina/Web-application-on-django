@@ -24,18 +24,16 @@
                 {% csrf_token %}
                 <label for="city">City</label>
                 {{ form.name }}
+                {% for message in messages %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% endfor %}
                 <input type="submit" name="send" value="Find out" class="mt-2 btn btn-danger">
             </form>
         </div>
         <div class="col-5 offset-2">
             <h1>Information</h1>
-            {% for message in messages %}
-                    <div class="alert alert-success">
-                        <button type="button" id="closeModal" class="btn btn-danger" data-dismiss="alert">x</button>
-                        {{ message }}
-                    </div>
-            {% endfor %}
-
             {% for info in all_info %}
             <div class="alert alert-info">
                 <div class="row">
