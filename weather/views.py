@@ -26,9 +26,9 @@ def index(request):
             messages.error(request, 'Error: no city named ' + city.name)
             city.delete()
             continue
-        print(res)
+        city.name = res["name"]
         city_info = {
-            'city': res["name"],
+            'city': city.name,
             'temp': res["main"]["temp"], #Celsius
             'pressure': float("{0:.1f}".format(res["main"]["pressure"]/1.333)), # /1.333   millimeter of mercury
             'humidity': res["main"]["humidity"], # %
