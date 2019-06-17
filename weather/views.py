@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from django.contrib import messages
 import requests
+from collections import OrderedDict
 from .models import City
 from .forms import CityForm
 
@@ -16,24 +18,26 @@ def index(request):
 
     cities = City.objects.all()
     all_cities = []
-    len_cities = len(cities)
-    for city in cities:
-        len_cities -= 1
-        if len_cities > 4:
+    for city in reversed(list(OrderedDict.fromkeys(cities))):
+        if len(all_cities) >= 5:
+            break
+        res = requests.get(url.format(city.name)).json()
+        if 'cod' in res and res["cod"] == '404':
+            messages.error(request, 'Error: no city named ' + city.name)
+            city.delete()
             continue
-        else:
-            res = requests.get(url.format(city.name)).json()
-            city_info = {
-                'city': city.name,
-                'temp': res["main"]["temp"], #Celsius
-                'pressure': float("{0:.1f}".format(res["main"]["pressure"]/1.333)), # /1.333   millimeter of mercury
-                'humidity': res["main"]["humidity"], # %
-                'wind': res["wind"]["speed"], # meter/sec
-                'icon': res["weather"][0]["icon"]
-            }
-            all_cities.append(city_info)
+        print(res)
+        city_info = {
+            'city': res["name"],
+            'temp': res["main"]["temp"], #Celsius
+            'pressure': float("{0:.1f}".format(res["main"]["pressure"]/1.333)), # /1.333   millimeter of mercury
+            'humidity': res["main"]["humidity"], # %
+            'wind': res["wind"]["speed"], # meter/sec
+            'icon': res["weather"][0]["icon"]
+        }
+        all_cities.append(city_info)
 
-    context = {'all_info': reversed(all_cities), 'form': form}
+    context = {'all_info': all_cities, 'form': form}
 
     return render(request, 'weather/index.html', context)
 
