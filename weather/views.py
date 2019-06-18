@@ -1,12 +1,12 @@
 import requests
-import json
+from django.http import HttpResponseRedirect
 from collections import OrderedDict
-
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib import messages
-
-from .models import City
+from .models import City, Choice, Question
 from .forms import CityForm
+from django.urls import reverse
+from django.views import generic
 
 
 def index(request):
@@ -25,7 +25,6 @@ def index(request):
     for city in list(OrderedDict.fromkeys(reversed(cities))):
         if len(all_cities) >= 5:
             break
-        
 
         weather_result = requests.get(weather.format(city.name)).json()
         if 'cod' in weather_result and weather_result["cod"] == '404':
@@ -45,10 +44,11 @@ def index(request):
 
         city_info = {
             'city': weather_result["name"],
-            'temp': weather_result["main"]["temp"], #Celsius
-            'pressure': float("{0:.1f}".format(weather_result["main"]["pressure"]/1.333)), # /1.333   millimeter of mercury
-            'humidity': weather_result["main"]["humidity"], # %
-            'wind': weather_result["wind"]["speed"], # meter/sec
+            'temp': weather_result["main"]["temp"],  # Celsius
+            'pressure': float("{0:.1f}".format(weather_result["main"]["pressure"] / 1.333)),
+            # /1.333   millimeter of mercury
+            'humidity': weather_result["main"]["humidity"],  # %
+            'wind': weather_result["wind"]["speed"],  # meter/sec
             'icon': weather_result["weather"][0]["icon"],
             'img': src
         }
@@ -61,3 +61,39 @@ def index(request):
 
 def home(request):
     return render(request, 'weather/home.html')
+
+
+def detail(request):
+    question = get_object_or_404(Question, pk=1)
+    return render(request, 'weather/detail.html', {'question': question})
+
+
+def results(request):
+    question = get_object_or_404(Question, pk=1)
+    return render(request, 'weather/results.html', {'question': question})
+
+
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'weather/detail.html'
+
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'weather/results.html'
+
+
+def vote(request):
+    question = get_object_or_404(Question, pk=1)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        # Redisplay the question voting form.
+        return render(request, 'weather/detail.html', {
+            'question': question,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        return HttpResponseRedirect(reverse('weather:results'))
