@@ -21,16 +21,16 @@
       </nav>
       <a class="btn btn-outline-primary" href="{%url 'weather:weather_info'%}">Find out weather</a>
     </div>
-    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-      <h1>{{ question.question_text }}</h1>
+    <div class="container">
+      <h1 class="display-6">{{ question.question_text }}</h1>
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         <form action="{% url 'weather:vote'%}" method="post">
         {% csrf_token %}
         {% for choice in question.choice_set.all %}
             <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            <label for="choice{{ forloop.counter }}" class="lead">{{ choice.choice_text }}</label><br>
         {% endfor %}
-    <input type="submit" value="Vote">
+    <input type="submit" class="lead" value="Vote">
     </form>
     </div>
 </body>
