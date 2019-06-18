@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Voting</title>
+    {% load staticfiles %}
+    <link rel="shortcut icon" href="{% static 'weather/image/favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'weather/styles.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm"
+         style="background-image: url({% static 'weather/image/5.jpg' %}); background-repeat: no-repeat;
+            background-size: 100%;">
+      <h5 class="my-0 mr-md-auto font-weight-normal">For the course "Development of software applications"</h5>
+      <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="{%url 'weather:home'%}">Home</a>
+        <a class="p-2 text-dark" href="{%url 'weather:vote'%}">Vote</a>
+      </nav>
+      <a class="btn btn-outline-primary" href="{%url 'weather:weather_info'%}">Find out weather</a>
+    </div>
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+      <h1>{{ question.question_text }}</h1>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <form action="{% url 'weather:vote'%}" method="post">
+        {% csrf_token %}
+        {% for choice in question.choice_set.all %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        {% endfor %}
+    <input type="submit" value="Vote">
+    </form>
+    </div>
+</body>
+</html>
