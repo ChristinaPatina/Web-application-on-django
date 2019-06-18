@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-<div style="background-image: url({% static 'weather/image/5.jpg' %})">
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm"
+    style="background-image: url({% static 'weather/image/5.jpg' %}); background-repeat: no-repeat;
+    background-size: 100%;">
       <h5 class="my-0 mr-md-auto font-weight-normal">For the course "Development of software applications"</h5>
       <nav class="my-2 my-md-0 mr-md-3">
         <a class="p-2 text-dark" href="{%url 'weather:home'%}">Home</a>
@@ -40,6 +41,7 @@
                 <div class="alert alert-info">
                     <div class="row">
                         <div class="col-9">
+                            <img src="{{ info.img }}" alt="{{ info.city }}" height="42" width="42">
                             <b>City:</b> {{ info.city }}<br>
                             <b>Temperature:</b> {{ info.temp }}<sup>o</sup>C<br>
                             <b>Pressure:</b> {{ info.pressure }} millimeter of mercury<br>
@@ -55,6 +57,5 @@
             </div>
         </div>
     </div>
-</div>
 </body>
 </html>
