@@ -21,14 +21,14 @@
       </nav>
       <a class="btn btn-outline-primary" href="{%url 'weather:weather_info'%}">Find out weather</a>
     </div>
-    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1>{{ question.question_text }}</h1>
+    <div class="container">
+        <h1 class="display-6">{{ question.question_text }}</h1>
         <ul>
         {% for choice in question.choice_set.all %}
-            <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+            <li class="lead">{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
         {% endfor %}
         </ul>
-        <a href="{% url 'weather:detail' %}">Vote again?</a>
+        <a href="{% url 'weather:detail' %}" class="lead">Vote again?</a>
     </div>
 </body>
 </html>
